@@ -230,11 +230,14 @@ namespace System.Windows.Forms
         {
             base.OnPaint(e);
 
-            using (GraphicsPath p = RibbonProfessionalRenderer.RoundRectangle(new Rectangle(Point.Empty, Size), BorderRoundness))
+            if (WinApi.IsWindows)
             {
-                using (Region r = new Region(p))
+                using (GraphicsPath p = RibbonProfessionalRenderer.RoundRectangle(new Rectangle(Point.Empty, Size), BorderRoundness))
                 {
-                    WrappedDropDown.Region = r;
+                    using (Region r = new Region(p))
+                    {
+                        WrappedDropDown.Region = r;
+                    }
                 }
             }
         }
