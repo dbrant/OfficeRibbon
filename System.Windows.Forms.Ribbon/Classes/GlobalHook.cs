@@ -429,6 +429,8 @@ namespace System.Windows.Forms.RibbonHelpers
         /// </summary>
         private void InstallHook()
         {
+            if (!WinApi.IsWindows) return;
+
             /// Error check
             if (Handle != 0) throw new Exception("Hook is already installed");
 
