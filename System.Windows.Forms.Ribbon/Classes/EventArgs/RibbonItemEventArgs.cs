@@ -22,7 +22,6 @@ namespace System.Windows.Forms
       private RibbonItem _item;
 
       public RibbonItemEventArgs( RibbonItem item)
-         : base()
       {
          Item = item;
       }
