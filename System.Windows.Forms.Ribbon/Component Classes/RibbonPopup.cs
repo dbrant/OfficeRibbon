@@ -96,23 +96,23 @@ namespace System.Windows.Forms
         /// <param name="screenLocation"></param>
         public void Show(Point screenLocation)
         {
-           if (WrappedDropDown == null)
-           {
-              ToolStripControlHost host = new ToolStripControlHost(this);
-              WrappedDropDown = new RibbonWrappedDropDown();
-              WrappedDropDown.AutoClose = RibbonDesigner.Current != null;
-              WrappedDropDown.Items.Add(host);
+            if (WrappedDropDown == null)
+            {
+                ToolStripControlHost host = new SafeToolStripControlHost(this);
+                WrappedDropDown = new RibbonWrappedDropDown();
+                WrappedDropDown.AutoClose = RibbonDesigner.Current != null;
+                WrappedDropDown.Items.Add(host);
 
-              WrappedDropDown.Padding = Padding.Empty;
-              WrappedDropDown.Margin = Padding.Empty;
-              host.Padding = Padding.Empty;
-              host.Margin = Padding.Empty;
+                WrappedDropDown.Padding = Padding.Empty;
+                WrappedDropDown.Margin = Padding.Empty;
+                host.Padding = Padding.Empty;
+                host.Margin = Padding.Empty;
 
-              WrappedDropDown.Opening += new CancelEventHandler(ToolStripDropDown_Opening);
-              WrappedDropDown.Closing += new ToolStripDropDownClosingEventHandler(ToolStripDropDown_Closing);
-              WrappedDropDown.Closed += new ToolStripDropDownClosedEventHandler(ToolStripDropDown_Closed);
-              WrappedDropDown.Size = Size;
-           }
+                WrappedDropDown.Opening += new CancelEventHandler(ToolStripDropDown_Opening);
+                WrappedDropDown.Closing += new ToolStripDropDownClosingEventHandler(ToolStripDropDown_Closing);
+                WrappedDropDown.Closed += new ToolStripDropDownClosedEventHandler(ToolStripDropDown_Closed);
+                WrappedDropDown.Size = Size;
+            }
             WrappedDropDown.Show(screenLocation);
             RibbonPopupManager.Register(this);
 
@@ -262,5 +262,24 @@ namespace System.Windows.Forms
         }
 
         #endregion
+    }
+
+    public class SafeToolStripControlHost : ToolStripControlHost
+    {
+        public SafeToolStripControlHost(Control c)
+            : base(c)
+        { }
+
+        protected override void Dispose(bool disposing)
+        {
+            try
+            {
+                // This can cause an unhandled exception in Mono, so catch it unconditionally.
+                // TODO: figure out the deeper reason why it happens.
+                base.Dispose(disposing);
+            }
+            catch(Exception)
+            { }
+        }
     }
 }
